@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link, NavLink, useParams, useNavigate } from 'react-router-dom';
-import { Home, Compass, Ticket, Briefcase, UserCircle, Settings, MapPin, Search, X } from 'lucide-react';
+import { Home, Compass, Ticket, Briefcase, UserCircle, Settings, MapPin, Search, X, Twitter, Instagram, Facebook } from 'lucide-react';
 
 import { AppProvider, useStore } from './store';
 import { LandingPage, FestivalsPage, FestivalDetailPage, ExperienceDetailPage, CheckoutPage, OrdersPage, LiveMapPage, HostDashboardPage, AdminPage, StoryTrailPage } from './pages/Pages';
@@ -11,34 +10,34 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-      isActive ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+    `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      isActive ? 'bg-indigo-100 text-[--color-indigo-dark]' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
     }`;
 
   const mobileNavLinkClasses = ({ isActive }: { isActive: boolean }) =>
   `block px-3 py-2 rounded-md text-base font-medium ${
-    isActive ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100'
+    isActive ? 'bg-indigo-100 text-[--color-indigo-dark]' : 'text-gray-700 hover:bg-gray-100'
   }`;
 
   return (
-    <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
+    <header className="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <Link to="/" className="text-2xl font-bold text-indigo-600">
+            <Link to="/" className="text-2xl font-bold font-serif text-[--color-indigo-dark]">
               Festive India
             </Link>
           </div>
-          <div className="hidden md:flex md:items-center md:space-x-8">
+          <div className="hidden md:flex md:items-center md:space-x-6">
             <NavLink to="/festivals" className={navLinkClasses}><Compass size={18} /><span>Festivals</span></NavLink>
             <NavLink to="/hosts/dashboard" className={navLinkClasses}><Briefcase size={18} /><span>For Hosts</span></NavLink>
             <NavLink to="/admin" className={navLinkClasses}><Settings size={18} /><span>Admin</span></NavLink>
           </div>
           <div className="flex items-center gap-4">
-             <Link to="/orders" className="relative text-gray-600 hover:text-indigo-600">
+             <Link to="/orders" className="relative text-gray-600 hover:text-[--color-terracotta]">
               <Ticket size={24} />
               {state.cart.length > 0 && (
-                <span className="absolute -top-1 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                <span className="absolute -top-1 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[--color-terracotta] text-xs text-white">
                   {state.cart.reduce((acc, item) => acc + item.qty, 0)}
                 </span>
               )}
@@ -65,13 +64,45 @@ const Header: React.FC = () => {
 };
 
 const Footer: React.FC = () => (
-  <footer className="bg-gray-100 border-t mt-12">
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
-      <p>&copy; {new Date().getFullYear()} Festive India. All rights reserved.</p>
-      <div className="flex justify-center space-x-4 mt-2">
-        <Link to="/legal/terms" className="hover:text-indigo-600">Terms of Service</Link>
-        <Link to="/legal/privacy" className="hover:text-indigo-600">Privacy Policy</Link>
-        <Link to="/legal/safety" className="hover:text-indigo-600">Safety</Link>
+  <footer className="bg-gray-100 border-t mt-16">
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="col-span-2 md:col-span-1">
+          <h3 className="text-xl font-bold font-serif text-[--color-indigo-dark]">Festive India</h3>
+          <p className="mt-2 text-gray-500 text-sm">Curated cultural experiences from the heart of India's festivals.</p>
+          <div className="flex space-x-4 mt-4">
+            <a href="#" className="text-gray-400 hover:text-gray-600"><Twitter size={20}/></a>
+            <a href="#" className="text-gray-400 hover:text-gray-600"><Facebook size={20}/></a>
+            <a href="#" className="text-gray-400 hover:text-gray-600"><Instagram size={20}/></a>
+          </div>
+        </div>
+        <div>
+          <h4 className="font-semibold text-gray-800">Explore</h4>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li><Link to="/festivals" className="text-gray-600 hover:text-black">Festivals</Link></li>
+            <li><Link to="/experiences" className="text-gray-600 hover:text-black">Experiences</Link></li>
+             <li><Link to="/storytrails" className="text-gray-600 hover:text-black">Story Trails</Link></li>
+          </ul>
+        </div>
+         <div>
+          <h4 className="font-semibold text-gray-800">Company</h4>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li><Link to="/about" className="text-gray-600 hover:text-black">About Us</Link></li>
+            <li><Link to="/hosts" className="text-gray-600 hover:text-black">Become a Host</Link></li>
+             <li><Link to="/contact" className="text-gray-600 hover:text-black">Contact</Link></li>
+          </ul>
+        </div>
+         <div>
+          <h4 className="font-semibold text-gray-800">Legal</h4>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li><Link to="/legal/terms" className="text-gray-600 hover:text-black">Terms of Service</Link></li>
+            <li><Link to="/legal/privacy" className="text-gray-600 hover:text-black">Privacy Policy</Link></li>
+            <li><Link to="/legal/safety" className="text-gray-600 hover:text-black">Safety</Link></li>
+          </ul>
+        </div>
+      </div>
+      <div className="mt-8 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
+        <p>&copy; {new Date().getFullYear()} Festive India. All rights reserved.</p>
       </div>
     </div>
   </footer>

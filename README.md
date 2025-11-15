@@ -36,7 +36,7 @@ This project is built with a modern, robust frontend stack, focusing on performa
 -   **UI Components**: Custom, reusable components inspired by [shadcn/ui](https://ui.shadcn.com/).
 -   **Icons**: [Lucide React](https://lucide.dev/)
 
-*This project is a **frontend-only application**. All data is mocked from local JSON fixtures in `/src/services/api.ts` to simulate a real backend.*
+*This project is a **frontend-only application**. All data is mocked from local JSON fixtures in `/src/services/api.ts` to simulate a real backend. Images are dynamically loaded from a placeholder service.*
 
 ---
 

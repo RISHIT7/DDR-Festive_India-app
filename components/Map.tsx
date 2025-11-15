@@ -68,7 +68,8 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
         if (!map.current) return;
         const el = document.createElement('div');
         el.className = 'marker';
-        el.style.backgroundImage = `url('https://placekitten.com/g/25/25')`; // Placeholder icon
+        // Use an embedded SVG for the marker to avoid external file dependencies
+        el.style.backgroundImage = `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMjcyNUIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTBjMCA3LTkgMTMtOSAxMy05LTUtOS02LTktMTNhOSw5LDAsMCwxLDE4LDBaIj48L3BhdGg+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iMyI+PC9jaXJjbGU+PC9zdmc+')`;
         el.style.width = `25px`;
         el.style.height = `25px`;
         el.style.backgroundSize = '100%';

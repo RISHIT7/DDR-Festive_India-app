@@ -1,4 +1,3 @@
-
 import React, { useState, Fragment } from 'react';
 import { X } from 'lucide-react';
 
@@ -13,9 +12,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-    const baseClasses = "inline-flex items-center justify-center rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-colors";
+    const baseClasses = "inline-flex items-center justify-center rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-all duration-200 transform active:scale-[0.98]";
     const variantClasses = {
-      primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500',
+      primary: 'bg-[--color-terracotta] text-white hover:bg-[#D46A58] focus:ring-[--color-terracotta]',
       secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-300',
       outline: 'border border-gray-300 bg-transparent hover:bg-gray-100 focus:ring-gray-300',
       ghost: 'hover:bg-gray-100 focus:ring-gray-300',
@@ -35,7 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('rounded-lg border bg-white shadow-sm', className)} {...props} />
+    <div ref={ref} className={cn('rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-xl', className)} {...props} />
   )
 );
 
@@ -44,7 +43,7 @@ export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<
 );
 
 export const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => <h3 ref={ref} className={cn('font-semibold leading-none tracking-tight', className)} {...props} />
+  ({ className, ...props }, ref) => <h3 ref={ref} className={cn('font-semibold font-serif leading-none tracking-tight text-xl', className)} {...props} />
 );
 
 export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
@@ -65,7 +64,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 export const Badge: React.FC<BadgeProps> = ({ className, variant = 'secondary', ...props }) => {
     const variantClasses = {
-        primary: 'bg-indigo-100 text-indigo-800',
+        primary: 'bg-orange-100 text-orange-800',
         secondary: 'bg-gray-100 text-gray-800',
         success: 'bg-green-100 text-green-800',
         warning: 'bg-yellow-100 text-yellow-800',
@@ -89,7 +88,7 @@ export const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, title, children
             <div className="relative w-full max-w-lg p-4">
                 <Card className="w-full">
                     <div className="flex items-start justify-between p-4 border-b">
-                        <h3 className="text-lg font-semibold">{title}</h3>
+                        <h3 className="text-lg font-semibold font-serif">{title}</h3>
                         <Button variant="ghost" size="sm" onClick={onClose} className="-m-2 p-2">
                             <X size={20} />
                             <span className="sr-only">Close</span>
@@ -105,14 +104,14 @@ export const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, title, children
 // Input Component
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
     ({ className, ...props }, ref) => (
-        <input className={cn("flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2", className)} ref={ref} {...props} />
+        <input className={cn("flex h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[--color-terracotta] focus:ring-offset-2", className)} ref={ref} {...props} />
     )
 );
 
 // Textarea Component
 export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
     ({ className, ...props }, ref) => (
-        <textarea className={cn("flex min-h-[80px] w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2", className)} ref={ref} {...props} />
+        <textarea className={cn("flex min-h-[80px] w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[--color-terracotta] focus:ring-offset-2", className)} ref={ref} {...props} />
     )
 );
 
@@ -125,5 +124,5 @@ export const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttribute
 
 // Skeleton Loader
 export const Skeleton: React.FC<{ className?: string }> = ({ className }) => {
-    return <div className={cn('animate-pulse rounded-md bg-gray-200', className)} />;
+    return <div className={cn('animate-pulse rounded-lg bg-gray-200', className)} />;
 };
