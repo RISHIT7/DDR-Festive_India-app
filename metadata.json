@@ -1,0 +1,7 @@
+{
+  "name": "Festive India",
+  "description": "A marketplace for atomic festival experiences in India with an AR/narrative layer. Discover, book, and navigate micro-experiences within India's vibrant festivals.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
