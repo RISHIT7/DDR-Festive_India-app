@@ -8,6 +8,7 @@ type AppState = {
   orders: Order[];
   globalAlert: string | null;
   userPreferences: string[];
+  theme: 'light' | 'dark';
 };
 
 type Action =
@@ -16,13 +17,15 @@ type Action =
   | { type: 'CLEAR_CART' }
   | { type: 'PLACE_ORDER'; payload: Order }
   | { type: 'SET_GLOBAL_ALERT'; payload: string | null }
-  | { type: 'SET_USER_PREFERENCES'; payload: string[] };
+  | { type: 'SET_USER_PREFERENCES'; payload: string[] }
+  | { type: 'SET_THEME'; payload: 'light' | 'dark' };
 
 const initialState: AppState = {
   cart: [],
   orders: [],
   globalAlert: null,
   userPreferences: [],
+  theme: 'light', // Default theme, will be updated on mount
 };
 
 const AppReducer = (state: AppState, action: Action): AppState => {
@@ -59,6 +62,9 @@ const AppReducer = (state: AppState, action: Action): AppState => {
     
     case 'SET_USER_PREFERENCES':
         return { ...state, userPreferences: action.payload };
+    
+    case 'SET_THEME':
+      return { ...state, theme: action.payload };
 
     default:
       return state;

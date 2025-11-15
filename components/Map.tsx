@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { MapPOI, Zone } from '../types';
+import { useStore } from '../store';
 
 // FIX: Declare mapboxgl as a global variable of type 'any' to inform TypeScript
 // that it exists, resolving 'Cannot find name' and 'Cannot find namespace' errors.
@@ -22,14 +23,19 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
   // FIX: Changed type from mapboxgl.Map to any because the full type definition
   // is not available, which caused a 'Cannot find namespace' error.
   const map = useRef<any | null>(null);
+  const { state } = useStore();
+  const theme = state.theme;
 
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
 
     (mapboxgl as any).accessToken = MAPBOX_TOKEN;
+    
+    const mapStyle = theme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12';
+
     map.current = new (mapboxgl as any).Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: mapStyle,
       center: center,
       zoom: zoom,
       interactive: interactive,
@@ -83,8 +89,15 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
           .addTo(map.current);
       });
     });
+    
+    return () => {
+        if(map.current) {
+            map.current.remove();
+            map.current = null;
+        }
+    };
 
-  }, [center, zoom, pois, zones, interactive]);
+  }, [center, zoom, pois, zones, interactive, theme]);
 
   return <div ref={mapContainer} className="w-full h-full" />;
 };

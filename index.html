@@ -23,6 +23,7 @@
 
       body {
         font-family: var(--font-sans);
+        transition: background-color 0.3s, color 0.3s;
       }
 
       h1, h2, h3, h4, h5, h6, .font-serif {
@@ -44,6 +45,15 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #555;
       }
+      .dark ::-webkit-scrollbar-track {
+        background: #2d3748;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #718096;
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
       .mapboxgl-popup-content {
         background-color: #ffffff;
         color: #333333;
@@ -51,8 +61,15 @@
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       }
+       .dark .mapboxgl-popup-content {
+        background-color: #2d3748;
+        color: #f7fafc;
+       }
       .mapboxgl-popup-close-button {
         color: #333;
+      }
+       .dark .mapboxgl-popup-close-button {
+        color: #f7fafc;
       }
     </style>
   <script type="importmap">
@@ -66,8 +83,23 @@
   }
 }
 </script>
+<script>
+    tailwind.config = {
+      darkMode: 'class', // Enable class-based dark mode
+      theme: {
+        extend: {
+          colors: {
+            'terracotta': 'var(--color-terracotta)',
+            'sand': 'var(--color-sand)',
+            'indigo-dark': 'var(--color-indigo-dark)',
+            'warm-gray': 'var(--color-warm-gray)',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-  <body class="bg-warm-gray text-gray-800">
+  <body class="bg-warm-gray text-gray-800 dark:bg-gray-900 dark:text-gray-200">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
