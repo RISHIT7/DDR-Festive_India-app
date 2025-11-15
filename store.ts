@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, Dispatch } from 'react';
 import { CartItem, Order, Experience } from './types';
 import { MOCK_EXPERIENCES } from './services/api';
@@ -8,7 +7,7 @@ type AppState = {
   orders: Order[];
   globalAlert: string | null;
   userPreferences: string[];
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' | 'festive';
 };
 
 type Action =
@@ -18,7 +17,7 @@ type Action =
   | { type: 'PLACE_ORDER'; payload: Order }
   | { type: 'SET_GLOBAL_ALERT'; payload: string | null }
   | { type: 'SET_USER_PREFERENCES'; payload: string[] }
-  | { type: 'SET_THEME'; payload: 'light' | 'dark' };
+  | { type: 'SET_THEME'; payload: 'light' | 'dark' | 'festive' };
 
 const initialState: AppState = {
   cart: [],

@@ -1,4 +1,4 @@
-import { Festival, Experience, Host, MapPOI, Review, StoryTrail } from '../types';
+import { Festival, Experience, Host, MapPOI, Review, StoryTrail, Zone, LiveEvent } from '../types';
 
 // MOCK DATA
 export const MOCK_HOSTS: Host[] = [
@@ -15,6 +15,12 @@ export const MOCK_POIS: MapPOI[] = [
   { id: 'poi-2', type: 'water', name: 'Filtered Water Station 1', coord: [88.358, 22.536], zoneId: 'zone-1' },
   { id: 'poi-3', type: 'firstaid', name: 'First Aid Post', coord: [88.359, 22.534], zoneId: 'zone-2' },
   { id: 'poi-4', type: 'help', name: 'Help Desk', coord: [88.357, 22.533], zoneId: 'zone-1' },
+];
+
+export const MOCK_LIVE_EVENTS: LiveEvent[] = [
+    { id: 'live-1', festivalId: 'durga-puja-kolkata-2025', title: 'Flash Mob Dance', coord: [88.3585, 22.5345], description: 'A surprise dance performance is happening now!' },
+    { id: 'live-2', festivalId: 'durga-puja-kolkata-2025', title: 'Dhunuchi Naach', coord: [88.3575, 22.5335], description: 'Traditional incense burner dance competition in progress.' },
+    { id: 'live-3', festivalId: 'diwali-varanasi-2025', title: 'Special Ganga Aarti', coord: [83.01, 25.30], description: 'A grander aarti ceremony is now live at Dashashwamedh Ghat.' },
 ];
 
 export const MOCK_EXPERIENCES: Experience[] = [
@@ -103,8 +109,8 @@ export const MOCK_FESTIVALS: Festival[] = [
     dates: { start: '2025-10-09', end: '2025-10-13' }, heroImage: 'https://picsum.photos/seed/durga-puja/1200/800',
     summary: 'Experience the grandeur of Durga Puja in the City of Joy. A vibrant celebration of art, culture, and devotion.',
     zones: [
-      { id: 'zone-1', name: 'Cultural', color: '#3B82F6', bounds: [[88.357, 22.535], [88.359, 22.535], [88.359, 22.533], [88.357, 22.533]] },
-      { id: 'zone-2', name: 'Food', color: '#EF4444', bounds: [[88.359, 22.534], [88.361, 22.534], [88.361, 22.532], [88.359, 22.532]] },
+      { id: 'zone-1', name: 'Cultural', color: '#3B82F6', bounds: [[88.357, 22.535], [88.359, 22.535], [88.359, 22.533], [88.357, 22.533]], crowdDensity: 'medium' },
+      { id: 'zone-2', name: 'Food', color: '#EF4444', bounds: [[88.359, 22.534], [88.361, 22.534], [88.361, 22.532], [88.359, 22.532]], crowdDensity: 'high' },
     ],
     schedule: [
       { id: 'sch-1', title: 'Inauguration Ceremony', start: '2025-10-09T18:00:00', end: '2025-10-09T19:00:00', zoneId: 'zone-1', description: 'Official start of the festivities.' },
@@ -163,6 +169,36 @@ export const MOCK_STORY_TRAILS: StoryTrail[] = [
             { id: 's1-2', title: 'The Creation of Durga', image: 'https://picsum.photos/seed/durga-creation/800/600', audioUrl: '', transcript: 'The defeated gods combined their divine energies, creating a formidable goddess, Durga. Each god gifted her their most powerful weapons.'},
             { id: 's1-3', title: 'The Final Battle', image: 'https://picsum.photos/seed/durga-battle/800/600', audioUrl: '', transcript: 'A fierce battle raged for nine days and nine nights. On the tenth day, Durga, riding her lion, vanquished Mahishasura, restoring peace. This victory is celebrated as Durga Puja.'}
         ]
+    },
+    {
+        id: 'story-2',
+        festivalId: 'holi-vrindavan-2026',
+        title: 'The Divine Romance of Radha-Krishna',
+        steps: [
+            { id: 's2-1', title: 'The Playful Prank', image: 'https://picsum.photos/seed/krishna-prank/800/600', audioUrl: '', transcript: 'Young Krishna, conscious of his dark blue skin, worried if the fair-skinned Radha would like him. On his mother\'s playful advice, he decided to approach Radha and color her face in any color he wanted.'},
+            { id: 's2-2', title: 'A Festival of Colors', image: 'https://picsum.photos/seed/radha-krishna-holi/800/600', audioUrl: '', transcript: 'This mischievous act of coloring Radha\'s face blossomed into a tradition. The playful coloring between them and their companions, the Gopis, is remembered and celebrated as Holi, a festival of love, colors, and joy.'},
+            { id: 's2-3', title: 'Lathmar Holi: A Unique Twist', image: 'https://picsum.photos/seed/lathmar-tradition/800/600', audioUrl: '', transcript: 'In Radha\'s village, Barsana, the tradition evolved. Women playfully beat the men from Krishna\'s village with sticks (lathis), who try to shield themselves, reenacting the playful chase. This unique celebration is known as Lathmar Holi.'}
+        ]
+    },
+    {
+        id: 'story-3',
+        festivalId: 'diwali-varanasi-2025',
+        title: 'The River of Light',
+        steps: [
+            { id: 's3-1', title: 'The Return of the Gods', image: 'https://picsum.photos/seed/gods-return-varanasi/800/600', audioUrl: '', transcript: 'Dev Deepawali, the "Diwali of the Gods," is celebrated on the full moon a fortnight after the main Diwali. It is believed that on this day, the gods descend to Earth to bathe in the sacred Ganges at Varanasi.'},
+            { id: 's3-2', title: 'A Million Earthen Lamps', image: 'https://picsum.photos/seed/varanasi-diyas/800/600', audioUrl: '', transcript: 'To welcome the deities, the people of Varanasi decorate the ancient ghats with millions of earthen lamps, or diyas. The steps leading down to the river shimmer and glow, creating a celestial pathway.'},
+            { id: 's3-3', title: 'A Spectacle of Devotion', image: 'https://picsum.photos/seed/ganga-aarti-diwali/800/600', audioUrl: '', transcript: 'The evening culminates in the grand Ganga Aarti, a meticulously choreographed ritual of fire, incense, and chants. The reflection of countless lamps on the flowing river creates an unforgettable, divine spectacle.'}
+        ]
+    },
+    {
+        id: 'story-4',
+        festivalId: 'kumbh-prayagraj-2025',
+        title: 'The Nectar of Immortality',
+        steps: [
+            { id: 's4-1', title: 'The Cosmic Churn', image: 'https://picsum.photos/seed/cosmic-churn/800/600', audioUrl: '', transcript: 'Long ago, gods and demons churned the cosmic ocean to obtain Amrit, the nectar of immortality. As the pot (Kumbh) of nectar emerged, a great struggle for its possession began.'},
+            { id: 's4-2', title: 'The Divine Chase', image: 'https://picsum.photos/seed/divine-chase-amrit/800/600', audioUrl: '', transcript: 'During the chase, which lasted for twelve divine days (twelve human years), four drops of the precious nectar fell to Earth at four specific locations: Prayagraj, Haridwar, Ujjain, and Nashik.'},
+            { id: 's4-3', title: 'A Sacred Pilgrimage', image: 'https://picsum.photos/seed/kumbh-pilgrimage/800/600', audioUrl: '', transcript: 'To commemorate this event, the Kumbh Mela is held at these four sites. Pilgrims believe that by bathing in the sacred rivers at these spots during the festival, they can cleanse their sins and move closer to salvation.'}
+        ]
     }
 ];
 
@@ -189,7 +225,26 @@ export const fetchExperienceById = (id: string) => simulateNetwork(MOCK_EXPERIEN
 export const fetchHostById = (id: string) => simulateNetwork(MOCK_HOSTS.find(h => h.id === id));
 export const fetchReviewsByExperienceId = (id: string) => simulateNetwork(MOCK_REVIEWS.filter(r => r.experienceId === id));
 export const fetchPoisByFestivalSlug = (slug: string) => simulateNetwork(MOCK_POIS); // Simplified for demo
-export const fetchStoryTrailByFestivalSlug = (slug: string) => simulateNetwork(MOCK_STORY_TRAILS.find(st => MOCK_FESTIVALS.find(f => f.slug === slug)?.slug === st.festivalId));
+export const fetchStoryTrailByFestivalSlug = (slug: string) => simulateNetwork(MOCK_STORY_TRAILS.find(st => st.festivalId === slug));
+
+// Mock function to simulate live data updates
+export const fetchLiveFestivalData = (slug: string) => {
+    const festival = MOCK_FESTIVALS.find(f => f.slug === slug);
+    if (!festival) return simulateNetwork({ zones: [], events: [] });
+
+    // Simulate crowd density changes
+    const updatedZones = festival.zones.map(zone => {
+        const densities: ('low' | 'medium' | 'high')[] = ['low', 'medium', 'high'];
+        return { ...zone, crowdDensity: densities[Math.floor(Math.random() * densities.length)] };
+    });
+
+    // Simulate random live events popping up
+    const liveEventsForFestival = MOCK_LIVE_EVENTS.filter(e => e.festivalId === slug);
+    const randomLiveEvents = liveEventsForFestival.filter(() => Math.random() > 0.5);
+
+    return simulateNetwork({ zones: updatedZones, events: randomLiveEvents });
+};
+
 
 // Mock function to "publish" a new experience
 export const publishNewExperience = (exp: Omit<Experience, 'id' | 'rating' | 'ratingCount'>) => {

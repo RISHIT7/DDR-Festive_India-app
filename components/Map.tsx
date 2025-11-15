@@ -1,6 +1,5 @@
-
 import React, { useRef, useEffect, useState } from 'react';
-import { MapPOI, Zone } from '../types';
+import { MapPOI, Zone, LiveEvent } from '../types';
 import { useStore } from '../store';
 
 // FIX: Declare mapboxgl as a global variable of type 'any' to inform TypeScript
@@ -15,14 +14,16 @@ interface MapProps {
   zoom: number;
   pois?: MapPOI[];
   zones?: Zone[];
+  liveEvents?: LiveEvent[];
   interactive?: boolean;
 }
 
-export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones = [], interactive = true }) => {
+export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones = [], liveEvents = [], interactive = true }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   // FIX: Changed type from mapboxgl.Map to any because the full type definition
   // is not available, which caused a 'Cannot find namespace' error.
   const map = useRef<any | null>(null);
+  const liveEventMarkers = useRef<any[]>([]);
   const { state } = useStore();
   const theme = state.theme;
 
@@ -31,7 +32,7 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
 
     (mapboxgl as any).accessToken = MAPBOX_TOKEN;
     
-    const mapStyle = theme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12';
+    const mapStyle = theme === 'light' ? 'mapbox://styles/mapbox/streets-v12' : 'mapbox://styles/mapbox/dark-v11';
 
     map.current = new (mapboxgl as any).Map({
       container: mapContainer.current,
@@ -40,41 +41,24 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
       zoom: zoom,
       interactive: interactive,
     });
+    
+     if (interactive) {
+      map.current.addControl(new (mapboxgl as any).GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+      }));
+    }
 
     map.current.on('load', () => {
       if (!map.current) return;
-
-      // Add zones
-      zones.forEach(zone => {
-        if (!map.current) return;
-        map.current.addSource(zone.id, {
-          'type': 'geojson',
-          'data': {
-            'type': 'Feature',
-            'geometry': {
-              'type': 'Polygon',
-              'coordinates': [zone.bounds]
-            }
-          }
-        });
-        map.current.addLayer({
-          'id': zone.id,
-          'type': 'fill',
-          'source': zone.id,
-          'layout': {},
-          'paint': {
-            'fill-color': zone.color.replace('bg-', '#'), // A bit of a hack for mock data
-            'fill-opacity': 0.3
-          }
-        });
-      });
-
       // Add POIs
       pois.forEach(poi => {
         if (!map.current) return;
         const el = document.createElement('div');
         el.className = 'marker';
-        // Use an embedded SVG for the marker to avoid external file dependencies
         el.style.backgroundImage = `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMjcyNUIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTBjMCA3LTkgMTMtOSAxMy05LTUtOS02LTktMTNhOSw5LDAsMCwxLDE4LDBaIj48L3BhdGg+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMCIgcj0iMyI+PC9jaXJjbGU+PC9zdmc+')`;
         el.style.width = `25px`;
         el.style.height = `25px`;
@@ -97,7 +81,65 @@ export const MapWrapper: React.FC<MapProps> = ({ center, zoom, pois = [], zones 
         }
     };
 
-  }, [center, zoom, pois, zones, interactive, theme]);
+  }, [center, zoom, pois, interactive]);
+  
+  // Effect to update zones (crowd density)
+  useEffect(() => {
+    if (!map.current || !map.current.isStyleLoaded()) return;
+    
+    const crowdOpacity = { low: 0.2, medium: 0.4, high: 0.6 };
+
+    zones.forEach(zone => {
+      if (map.current.getSource(zone.id)) {
+        // Update layer paint property if layer exists
+        if(map.current.getLayer(zone.id)) {
+            map.current.setPaintProperty(zone.id, 'fill-opacity', crowdOpacity[zone.crowdDensity || 'low']);
+        }
+      } else {
+        // Add source and layer if they don't exist
+        map.current.addSource(zone.id, {
+          'type': 'geojson',
+          'data': { 'type': 'Feature', 'geometry': { 'type': 'Polygon', 'coordinates': [zone.bounds] } }
+        });
+        map.current.addLayer({
+          'id': zone.id,
+          'type': 'fill',
+          'source': zone.id,
+          'layout': {},
+          'paint': {
+            'fill-color': zone.color,
+            'fill-opacity': crowdOpacity[zone.crowdDensity || 'low']
+          }
+        });
+      }
+    });
+  }, [zones, theme]);
+
+  // Effect to update live events
+   useEffect(() => {
+    if (!map.current || !map.current.isStyleLoaded()) return;
+
+    // Remove old markers
+    liveEventMarkers.current.forEach(marker => marker.remove());
+    liveEventMarkers.current = [];
+
+    // Add new markers
+    liveEvents.forEach(event => {
+      const el = document.createElement('div');
+      el.className = 'live-marker';
+      
+      const popup = new (mapboxgl as any).Popup({ offset: 25 })
+          .setHTML(`<h3>${event.title}</h3><p>${event.description}</p>`);
+
+      const marker = new (mapboxgl as any).Marker(el)
+        .setLngLat(event.coord as [number, number])
+        .setPopup(popup)
+        .addTo(map.current);
+      
+      liveEventMarkers.current.push(marker);
+    });
+  }, [liveEvents]);
+
 
   return <div ref={mapContainer} className="w-full h-full" />;
 };

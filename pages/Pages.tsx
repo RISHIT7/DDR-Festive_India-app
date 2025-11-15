@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Home, Compass, Search, Map, Calendar, Shield, Sparkles, Star, Users, MapPin, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, Plus, Minus, Trash2, Tag, QrCode, Award, Heart, Eye } from 'lucide-react';
+import { Home, Compass, Search, Map, Calendar, Shield, Sparkles, Star, Users, MapPin, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight, Plus, Minus, Trash2, Tag, QrCode, Award, Heart, Eye, RadioTower } from 'lucide-react';
 
 import { useStore } from '../store';
 // FIX: Import MOCK_FESTIVALS to resolve 'Cannot find name' error.
-import { fetchFestivals, fetchFestivalBySlug, fetchExperiences, fetchExperienceById, fetchHostById, fetchReviewsByExperienceId, fetchPoisByFestivalSlug, fetchStoryTrailByFestivalSlug, publishNewExperience, MOCK_FESTIVALS } from '../services/api';
-import { Festival, Experience, Host, Review, MapPOI, StoryTrail, CartItem } from '../types';
+import { fetchFestivals, fetchFestivalBySlug, fetchExperiences, fetchExperienceById, fetchHostById, fetchReviewsByExperienceId, fetchPoisByFestivalSlug, fetchStoryTrailByFestivalSlug, publishNewExperience, MOCK_FESTIVALS, fetchLiveFestivalData } from '../services/api';
+import { Festival, Experience, Host, Review, MapPOI, StoryTrail, CartItem, Zone, LiveEvent } from '../types';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Badge, Skeleton, Dialog, Input, Textarea, Label } from '../components/ui';
 import { MapWrapper } from '../components/Map';
 
@@ -13,9 +13,9 @@ import { MapWrapper } from '../components/Map';
 const Rating: React.FC<{ rating: number; count?: number; size?: number }> = ({ rating, count, size = 16 }) => (
     <div className="flex items-center">
         {[...Array(5)].map((_, i) => (
-            <Star key={i} className={i < Math.round(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600'} size={size} />
+            <Star key={i} className={i < Math.round(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600 festive:text-terracotta/40'} size={size} />
         ))}
-        {count && <span className="text-xs text-gray-500 dark:text-gray-400 ml-1.5">({count} reviews)</span>}
+        {count && <span className="text-xs text-gray-500 dark:text-gray-400 festive:text-festive-light/70 ml-1.5">({count} reviews)</span>}
     </div>
 );
 
@@ -32,46 +32,46 @@ const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) =>
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 festive:text-festive-light/80">
                     <span className="flex items-center"><Clock size={14} className="inline mr-1" />{experience.durationMins} mins</span>
                     <Rating rating={experience.rating} />
                 </div>
             </CardContent>
             <CardFooter>
-                <span className="text-xl font-bold text-[--color-indigo-dark] dark:text-indigo-300">₹{experience.priceINR}</span>
+                <span className="text-xl font-bold text-[--color-indigo-dark] dark:text-indigo-300 festive:text-terracotta">₹{experience.priceINR}</span>
             </CardFooter>
         </Link>
     </Card>
 );
 
 const WhyChooseUs: React.FC = () => (
-    <div className="bg-white dark:bg-gray-800 py-16">
+    <div className="bg-white dark:bg-gray-800 festive:bg-festive-card py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold font-serif text-gray-900 dark:text-white">Why Festive India?</h2>
-                <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Your gateway to authentic and unforgettable cultural journeys.</p>
+                <h2 className="text-3xl font-bold font-serif text-gray-900 dark:text-white festive:text-festive-light">Why Festive India?</h2>
+                <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 festive:text-festive-light/80">Your gateway to authentic and unforgettable cultural journeys.</p>
             </div>
             <div className="mt-12 grid md:grid-cols-3 gap-10">
                 <div className="text-center">
-                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 text-[--color-terracotta] mx-auto">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 festive:bg-terracotta/20 text-[--color-terracotta] mx-auto">
                         <Award size={28} />
                     </div>
-                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white">Authentic Experiences</h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">Handpicked, verified hosts ensure you get a genuine taste of Indian culture, not a tourist trap.</p>
+                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white festive:text-festive-light">Authentic Experiences</h3>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400 festive:text-festive-light/70">Handpicked, verified hosts ensure you get a genuine taste of Indian culture, not a tourist trap.</p>
                 </div>
                 <div className="text-center">
-                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 text-[--color-terracotta] mx-auto">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 festive:bg-terracotta/20 text-[--color-terracotta] mx-auto">
                         <Shield size={28} />
                     </div>
-                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white">Safety & Trust</h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">We prioritize your well-being with safety-certified experiences and clear guidance on the ground.</p>
+                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white festive:text-festive-light">Safety & Trust</h3>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400 festive:text-festive-light/70">We prioritize your well-being with safety-certified experiences and clear guidance on the ground.</p>
                 </div>
                 <div className="text-center">
-                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 text-[--color-terracotta] mx-auto">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/50 festive:bg-terracotta/20 text-[--color-terracotta] mx-auto">
                         <Heart size={28} />
                     </div>
-                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white">Curated with Love</h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">From historical narratives to culinary delights, every experience is chosen to create lasting memories.</p>
+                    <h3 className="mt-5 text-lg font-semibold font-serif dark:text-white festive:text-festive-light">Curated with Love</h3>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400 festive:text-festive-light/70">From historical narratives to culinary delights, every experience is chosen to create lasting memories.</p>
                 </div>
             </div>
         </div>
@@ -142,10 +142,10 @@ export const LandingPage: React.FC = () => {
 
             {/* Preference Modal */}
             <Dialog isOpen={isPrefsModalOpen} onClose={() => setIsPrefsModalOpen(false)} title="What are you looking for?">
-                <p className="text-gray-600 dark:text-gray-300 mb-6">Select your interests to get personalized recommendations.</p>
+                <p className="text-gray-600 dark:text-gray-300 festive:text-festive-light/80 mb-6">Select your interests to get personalized recommendations.</p>
                 <div className="flex flex-wrap gap-3 mb-8">
                     {PREFERENCE_OPTIONS.map(pref => (
-                        <button key={pref} onClick={() => handlePrefToggle(pref)} className={`px-4 py-2 rounded-full text-sm font-medium border-2 transition-colors ${selectedPrefs.includes(pref) ? 'bg-[--color-terracotta] text-white border-[--color-terracotta]' : 'bg-white text-gray-700 border-gray-300 hover:border-[--color-terracotta] dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:border-[--color-terracotta]'}`}>
+                        <button key={pref} onClick={() => handlePrefToggle(pref)} className={`px-4 py-2 rounded-full text-sm font-medium border-2 transition-colors ${selectedPrefs.includes(pref) ? 'bg-[--color-terracotta] text-white border-[--color-terracotta]' : 'bg-white text-gray-700 border-gray-300 hover:border-[--color-terracotta] dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:border-[--color-terracotta] festive:bg-festive-card festive:text-festive-light festive:border-festive-border festive:hover:border-terracotta'}`}>
                             {pref}
                         </button>
                     ))}
@@ -262,7 +262,7 @@ export const FestivalDetailPage: React.FC = () => {
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2">
                         <h2 className="text-3xl font-bold font-serif mb-2">About the Festival</h2>
-                        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">{festival.summary}</p>
+                        <p className="text-lg text-gray-700 dark:text-gray-300 festive:text-festive-light/90 mb-8">{festival.summary}</p>
                         
                         <div className="mb-12">
                              <h2 className="text-3xl font-bold font-serif mb-6">Featured Experiences</h2>
@@ -285,12 +285,12 @@ export const FestivalDetailPage: React.FC = () => {
                                 <CardContent>
                                     <ul className="space-y-4">
                                         {festival.schedule.slice(0, 3).map(item => <li key={item.id} className="flex items-start gap-3">
-                                            <div className="bg-orange-100 dark:bg-orange-900/50 text-[--color-terracotta] rounded-lg p-2 text-center text-sm">
+                                            <div className="bg-orange-100 dark:bg-orange-900/50 festive:bg-terracotta/20 text-[--color-terracotta] rounded-lg p-2 text-center text-sm">
                                                 <div className="font-bold">{new Date(item.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false})}</div>
                                             </div>
                                             <div>
                                                 <p className="font-semibold">{item.title}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 festive:text-festive-light/80">{item.description}</p>
                                             </div>
                                         </li>)}
                                     </ul>
@@ -299,7 +299,7 @@ export const FestivalDetailPage: React.FC = () => {
                              <Card>
                                 <CardHeader><CardTitle>Safety Information</CardTitle></CardHeader>
                                 <CardContent>
-                                     <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                                     <ul className="space-y-3 text-gray-700 dark:text-gray-300 festive:text-festive-light">
                                         <li className="flex items-center"><Shield size={18} className="mr-3 text-green-500"/>{festival.safety.toilets} Clean Toilets</li>
                                         <li className="flex items-center"><Shield size={18} className="mr-3 text-green-500"/>{festival.safety.waterPoints} Water Points</li>
                                         <li className="flex items-center"><Shield size={18} className="mr-3 text-green-500"/>{festival.safety.firstAidStations} First-Aid Stations</li>
@@ -354,7 +354,7 @@ export const ExperienceDetailPage: React.FC = () => {
             <div className="grid lg:grid-cols-3 gap-12">
                 <div className="lg:col-span-2">
                     <h1 className="text-4xl lg:text-5xl font-bold font-serif">{experience.title}</h1>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-gray-600 dark:text-gray-400">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-gray-600 dark:text-gray-400 festive:text-festive-light/80">
                         <Rating rating={experience.rating} count={experience.ratingCount} />
                         <span className="hidden sm:inline">|</span>
                         <div className="flex items-center gap-2"><Clock size={16} />{experience.durationMins} minutes</div>
@@ -363,11 +363,11 @@ export const ExperienceDetailPage: React.FC = () => {
                     </div>
                     <img src={experience.media[0]} alt={experience.title} className="w-full h-[50vh] object-cover rounded-xl mt-8" />
                     
-                    <div className="mt-10 pt-8 border-t dark:border-gray-700">
-                        <p className="text-lg text-gray-700 dark:text-gray-300">{experience.description}</p>
+                    <div className="mt-10 pt-8 border-t dark:border-gray-700 festive:border-festive-border">
+                        <p className="text-lg text-gray-700 dark:text-gray-300 festive:text-festive-light/90">{experience.description}</p>
                     </div>
                     
-                    <div className="mt-10 pt-8 border-t dark:border-gray-700 grid md:grid-cols-2 gap-8">
+                    <div className="mt-10 pt-8 border-t dark:border-gray-700 festive:border-festive-border grid md:grid-cols-2 gap-8">
                         <div>
                             <h3 className="text-2xl font-semibold font-serif mb-4">What's Included</h3>
                             <ul className="space-y-2">
@@ -382,7 +382,7 @@ export const ExperienceDetailPage: React.FC = () => {
                         </div>
                     </div>
                      {host && (
-                        <Card className="mt-10 pt-8 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                        <Card className="mt-10 pt-8 border-t dark:border-gray-700 festive:border-festive-border bg-gray-50 dark:bg-gray-800/50 festive:bg-festive-card/50">
                             <CardHeader className="flex-row items-center gap-4">
                                 <img src={host.avatar} alt={host.name} className="w-20 h-20 rounded-full" />
                                 <div>
@@ -401,13 +401,13 @@ export const ExperienceDetailPage: React.FC = () => {
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24 shadow-2xl">
                         <CardHeader>
-                            <CardDescription className="text-3xl font-bold text-[--color-indigo-dark] dark:text-indigo-300 font-sans">₹{experience.priceINR}</CardDescription>
+                            <CardDescription className="text-3xl font-bold text-[--color-indigo-dark] dark:text-indigo-300 festive:text-terracotta font-sans">₹{experience.priceINR}</CardDescription>
                             <CardTitle className="text-lg !font-semibold !font-sans">per person</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
                                 <Label htmlFor="slot" className="font-semibold">Select Date & Time</Label>
-                                <select id="slot" value={selectedSlot} onChange={e => setSelectedSlot(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[--color-terracotta] focus:border-[--color-terracotta] sm:text-sm rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <select id="slot" value={selectedSlot} onChange={e => setSelectedSlot(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[--color-terracotta] focus:border-[--color-terracotta] sm:text-sm rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white festive:bg-festive-card festive:border-festive-border">
                                     {experience.slots.map(slot => <option key={slot.start} value={slot.start}>{new Date(slot.start).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</option>)}
                                 </select>
                             </div>
@@ -418,9 +418,9 @@ export const ExperienceDetailPage: React.FC = () => {
                                     <span className="font-bold w-4 text-center">{quantity}</span>
                                     <Button variant="outline" size="sm" onClick={() => setQuantity(q => Math.min(availableSeats, experience.maxGroupSize, q + 1))}>+</Button>
                                 </div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{availableSeats} seats available</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 festive:text-festive-light/70 mt-1">{availableSeats} seats available</p>
                             </div>
-                            <div className="text-xl font-bold flex justify-between pt-4 border-t dark:border-gray-700">
+                            <div className="text-xl font-bold flex justify-between pt-4 border-t dark:border-gray-700 festive:border-festive-border">
                                 <span>Total</span>
                                 <span>₹{experience.priceINR * quantity}</span>
                             </div>
@@ -474,12 +474,12 @@ export const CheckoutPage: React.FC = () => {
                                     <div key={item.experience.id + item.slot} className="flex justify-between items-start">
                                         <div>
                                             <p className="font-semibold">{item.experience.title}</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">{item.qty} x ₹{item.experience.priceINR}</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 festive:text-festive-light/80">{item.qty} x ₹{item.experience.priceINR}</p>
                                         </div>
                                         <p className="font-semibold">₹{item.qty * item.experience.priceINR}</p>
                                     </div>
                                 ))}
-                                <div className="border-t dark:border-gray-700 pt-4 flex justify-between font-bold text-lg">
+                                <div className="border-t dark:border-gray-700 festive:border-festive-border pt-4 flex justify-between font-bold text-lg">
                                     <span>Total</span>
                                     <span>₹{total}</span>
                                 </div>
@@ -536,7 +536,7 @@ export const OrdersPage: React.FC = () => {
                                     {order.items.map(item => (
                                         <div key={item.experienceId + item.slot}>
                                             <p className="font-semibold">{item.title}</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">{item.qty} tickets for {new Date(item.slot).toLocaleString()}</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 festive:text-festive-light/80">{item.qty} tickets for {new Date(item.slot).toLocaleString()}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -557,21 +557,56 @@ export const LiveMapPage: React.FC = () => {
     const { festivalSlug } = useParams<{ festivalSlug: string }>();
     const [festival, setFestival] = useState<Festival | null>(null);
     const [pois, setPois] = useState<MapPOI[]>([]);
+    const [liveData, setLiveData] = useState<{ zones: Zone[], events: LiveEvent[] }>({ zones: [], events: [] });
     
     useEffect(() => {
         if(festivalSlug) {
-            fetchFestivalBySlug(festivalSlug).then(setFestival);
+            fetchFestivalBySlug(festivalSlug).then(f => {
+                setFestival(f || null);
+                if (f) {
+                    setLiveData(prev => ({ ...prev, zones: f.zones }));
+                }
+            });
             fetchPoisByFestivalSlug(festivalSlug).then(setPois);
         }
+    }, [festivalSlug]);
+
+    useEffect(() => {
+        if (!festivalSlug) return;
+        const interval = setInterval(() => {
+            fetchLiveFestivalData(festivalSlug).then(data => {
+                setLiveData(data);
+            });
+        }, 5000); // Refresh every 5 seconds
+
+        return () => clearInterval(interval);
     }, [festivalSlug]);
 
     if (!festival) return <div>Loading map...</div>;
 
     const centerCoord: [number, number] = festival.zones.length > 0 ? festival.zones[0].bounds[0] as [number, number] : [88.363, 22.572]; // Default to Kolkata if no zones
 
+    const MapLegend = () => (
+        <Card className="absolute top-4 left-4 z-10 p-4">
+            <h4 className="font-bold mb-2">Legend</h4>
+            <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-green-500 opacity-50"></div><span>Low Density</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-yellow-500 opacity-50"></div><span>Medium Density</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-red-500 opacity-50"></div><span>High Density</span></div>
+                <div className="flex items-center gap-2"><RadioTower size={16} className="text-terracotta"/><span>Live Event</span></div>
+            </div>
+        </Card>
+    );
+
+    const crowdColoredZones = liveData.zones.map(zone => {
+        const colorMapping = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444' };
+        return { ...zone, color: colorMapping[zone.crowdDensity || 'low'] };
+    });
+
     return (
-        <div className="h-[calc(100vh-4rem)]">
-            <MapWrapper center={centerCoord} zoom={15} pois={pois} zones={festival.zones} />
+        <div className="relative h-[calc(100vh-4rem)]">
+            <MapLegend />
+            <MapWrapper center={centerCoord} zoom={15} pois={pois} zones={crowdColoredZones} liveEvents={liveData.events} />
         </div>
     );
 };
@@ -591,7 +626,7 @@ export const StoryTrailPage: React.FC = () => {
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-4xl font-bold font-serif mb-2">{storyTrail.title}</h1>
-            <p className="text-lg text-gray-500 dark:text-gray-400 mb-8">An immersive audio-visual journey.</p>
+            <p className="text-lg text-gray-500 dark:text-gray-400 festive:text-festive-light/80 mb-8">An immersive audio-visual journey.</p>
             <div className="space-y-8">
                 {storyTrail.steps.map((step, index) => (
                     <Card key={step.id}>
@@ -599,7 +634,7 @@ export const StoryTrailPage: React.FC = () => {
                            <img src={step.image} alt={step.title} className="w-full md:w-1/3 h-56 object-cover rounded-t-xl md:rounded-l-xl md:rounded-t-none"/>
                            <div className="p-6 flex-grow">
                                 <h3 className="text-xl font-semibold font-serif mb-2">{index+1}. {step.title}</h3>
-                                <p className="text-gray-600 dark:text-gray-300 mb-4">{step.transcript}</p>
+                                <p className="text-gray-600 dark:text-gray-300 festive:text-festive-light/90 mb-4">{step.transcript}</p>
                                 {/* AR Placeholder */}
                                 <Button variant="outline"><Sparkles size={16} className="mr-2"/>Launch AR Experience</Button>
                            </div>
@@ -612,7 +647,7 @@ export const StoryTrailPage: React.FC = () => {
 };
 
 export const HostDashboardPage: React.FC = () => {
-    const [newExperience, setNewExperience] = useState({ title: '', priceINR: 500, durationMins: 60, description: '', media: '' });
+    const [newExperience, setNewExperience] = useState({ title: '', priceINR: 500, durationMins: 60, description: '', media: '', experienceTags: '', festivalTags: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -621,6 +656,10 @@ export const HostDashboardPage: React.FC = () => {
 
         const imageUrls = newExperience.media.split(',').map(url => url.trim()).filter(url => url);
         
+        const experienceTags = newExperience.experienceTags.split(',').map(t => t.trim()).filter(t => t);
+        const festivalTags = newExperience.festivalTags.split(',').map(t => t.trim()).filter(t => t);
+        const combinedTags = [...new Set([...experienceTags, ...festivalTags])];
+
         // This is a simplified version of the experience object
         const experienceData: any = {
             festivalId: 'durga-puja-kolkata-2025', // Mock
@@ -637,11 +676,11 @@ export const HostDashboardPage: React.FC = () => {
             safetyBadges: ['Certified Safe'],
             slots: [{ start: '2025-10-11T10:00:00', seats: 10 }],
             description: newExperience.description,
-            tags: ['Cultural']
+            tags: combinedTags.length > 0 ? combinedTags : ['New Experience'],
         };
         await publishNewExperience(experienceData);
         alert('New experience submitted for review!');
-        setNewExperience({ title: '', priceINR: 500, durationMins: 60, description: '', media: '' });
+        setNewExperience({ title: '', priceINR: 500, durationMins: 60, description: '', media: '', experienceTags: '', festivalTags: '' });
         setIsSubmitting(false);
     };
 
@@ -672,9 +711,19 @@ export const HostDashboardPage: React.FC = () => {
                                 <Textarea id="description" value={newExperience.description} onChange={e => setNewExperience({...newExperience, description: e.target.value})} required/>
                             </div>
                             <div>
+                                <Label htmlFor="experienceTags">Experience Tags</Label>
+                                <Input id="experienceTags" value={newExperience.experienceTags} onChange={e => setNewExperience({...newExperience, experienceTags: e.target.value})} placeholder="e.g., Workshop, Hands-on, Art" />
+                                <p className="text-xs text-gray-500 dark:text-gray-400 festive:text-festive-light/70 mt-1">Tags that describe your specific activity. Comma-separated.</p>
+                            </div>
+                             <div>
+                                <Label htmlFor="festivalTags">Festival Context Tags</Label>
+                                <Input id="festivalTags" value={newExperience.festivalTags} onChange={e => setNewExperience({...newExperience, festivalTags: e.target.value})} placeholder="e.g., Spiritual, Nightlife, Family-friendly" />
+                                <p className="text-xs text-gray-500 dark:text-gray-400 festive:text-festive-light/70 mt-1">Tags describing the festival vibe your experience fits into. Comma-separated.</p>
+                            </div>
+                            <div>
                                 <Label htmlFor="media">Image URLs</Label>
                                 <Input id="media" value={newExperience.media} onChange={e => setNewExperience({...newExperience, media: e.target.value})} placeholder="https://.../img1.jpg, https://.../img2.jpg" />
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Provide comma-separated URLs for your experience images.</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 festive:text-festive-light/70 mt-1">Provide comma-separated URLs for your experience images.</p>
                             </div>
                             <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Submitting...' : 'Submit for Review'}</Button>
                         </form>
@@ -683,7 +732,7 @@ export const HostDashboardPage: React.FC = () => {
                 <div className="space-y-6">
                     <Card>
                         <CardHeader><CardTitle>Today's Bookings</CardTitle></CardHeader>
-                        <CardContent><p className="text-gray-500 dark:text-gray-400">No bookings for today.</p></CardContent>
+                        <CardContent><p className="text-gray-500 dark:text-gray-400 festive:text-festive-light/80">No bookings for today.</p></CardContent>
                     </Card>
                      <Card>
                         <CardHeader><CardTitle>Payout Estimate</CardTitle></CardHeader>
@@ -714,7 +763,7 @@ export const AdminPage: React.FC = () => {
                 <Card>
                     <CardHeader><CardTitle>Push Global Alert</CardTitle></CardHeader>
                     <CardContent className="space-y-4">
-                         <p className="text-sm text-gray-600 dark:text-gray-400">Push a banner alert to all users. E.g., "Zone C is currently at high density."</p>
+                         <p className="text-sm text-gray-600 dark:text-gray-400 festive:text-festive-light/80">Push a banner alert to all users. E.g., "Zone C is currently at high density."</p>
                         <Input ref={alertMessageRef} placeholder="Alert message..." />
                         <Button onClick={handlePushAlert}>Push Alert</Button>
                     </CardContent>
@@ -725,7 +774,7 @@ export const AdminPage: React.FC = () => {
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="font-semibold">Sanjay Singh</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Submitted 2 days ago</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 festive:text-festive-light/80">Submitted 2 days ago</p>
                             </div>
                             <Button variant="outline" size="sm">View & Approve</Button>
                         </div>

@@ -20,6 +20,7 @@ export interface Zone {
   name: "Cultural" | "Food" | "Ritual" | "Kids";
   color: string;
   bounds: [number, number][]; // Simplified from GeoJSON for this mock
+  crowdDensity?: 'low' | 'medium' | 'high';
 }
 
 export interface FestivalEvent {
@@ -122,4 +123,12 @@ export interface StoryStep {
   image: string;
   audioUrl: string; // Placeholder for audio file
   transcript: string;
+}
+
+export interface LiveEvent {
+    id: string;
+    festivalId: string;
+    title: string;
+    coord: [number, number];
+    description: string;
 }
